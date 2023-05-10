@@ -72,7 +72,7 @@ bq load --autodetect \
 
 Then, create row level access policies for each table
 
-1. crm_account
+#### 1. crm_account policy
 
 ```sql
 CREATE ROW ACCESS POLICY crm_account_filter
@@ -81,7 +81,7 @@ GRANT TO('user:bruce@justinjm.altostrat.com')
 FILTER USING(State_Code='CA')
 ```
 
-2. crm_user
+#### 2. crm_user policy
 
 ```sql
 CREATE ROW ACCESS POLICY crm_user_filter
@@ -92,20 +92,48 @@ FILTER USING(Country_Code = 'US')
 
 ## Setup Google Cloud Function
 
-Navigate to [Cloud Functions](https://console.cloud.google.com/functions) within the Google Cloud console and setup a Cloud function as follows: 
+Navigate to [Cloud Functions](https://console.cloud.google.com/functions) within the Google Cloud console and setup a Cloud function as follows. For this workflow, we will use 1st Gen Cloud functions  
 
-* Cloud function v1
-* type = https
-* leave the rest as defaults and click next 
-* In the source tab, copy `main.py` 
-* change entry point to `get_row_access_polices`
-* click deploy
+### 1. Configuration 
+
+On the configuration page, configure the following settings:
+
+* Basics
+  * environment: 1st gen
+  * function name: `bq-table-row-access-policies`
+  * region: `us-central1`
+* Trigger
+  * Trigger type: `HTTP`
+  * leave the rest as defaults and click save 
+
+![](img/gcf-01.png)
+
+
+Then, scroll to the bottom and click "Next"
+
+
+![](img/gcf-02.png)
+
+
+### 2. Code 
+
+On the Code page, configure the following settings:
+
+* Runtime: `Python 3.11`
+* Source code: Inline Editor 
+* Entry point: `get_row_access_polices`
+
+Then, select the `main.py` file on the left-hand side and copy the code from the `main.py` file from this repository.
+
+Repeat for  `requirements.txt` and then click "DEPLOY" 
+
+![](img/gcf-03.png)
 
 ### Grant service accounts acccess
 
 While GCF is deploying, grant account access in 2 places
 
-1. the app engine default service account BigQuery permissions  so that the cloud function can access BQ (you can remove/adjust this later):
+1. the app engine default service account BigQuery permissions so that the cloud function can access BQ (you can remove/adjust this later):
 
 ```sh
 gcloud projects add-iam-policy-binding demos-vertex-ai \
