@@ -31,7 +31,11 @@ gcloud services enable bigqueryconnection.googleapis.com
 
 ```sh
 gcloud components update
-bq mk --connection --display_name='get_row_access_policies' --connection_type=CLOUD_RESOURCE --project_id=$(gcloud config get-value project) --location=US  gcf-conn
+bq mk --connection --display_name='get_row_access_policies' \
+    --connection_type=CLOUD_RESOURCE \
+    --project_id=$(gcloud config get-value project) \
+    --location=US  \
+    gcf-conn
 ```
 
 Show connection info and copy service account, you will need this in a later step
