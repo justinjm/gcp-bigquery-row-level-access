@@ -1,10 +1,11 @@
-# Google Cloud BigQuery - Row Level Access Helper
+# Google Cloud BigQuery - Row Level Access Policy Helper
 
-Row Level Access Policies are only viewable via the API and `bq` CLI (as of th)
+A BigQuery Remote function to query and view row-level access policies since Row Level Access Policies are currently viewable via the API and `bq` CLI. 
 
-To begin, Open Cloud shell and follow the steps below
+To begin, Open Cloud shell and follow the steps below.
 
-@TODO - update this link
+@TODO - update this link  
+
 [![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://shell.cloud.google.com/cloudshell/editor)
 
 ## enable apis
@@ -27,6 +28,16 @@ bq show --location=US --connection gcf-conn
 ```
 
 ## Setup Data
+
+Create a dataset and then load the 2 example csv files into BQ 
+
+```sh
+# bq mk z_test 
+```
+
+```sh
+# bq mk
+```
 
 Create 2 tables in a single dataset
 
