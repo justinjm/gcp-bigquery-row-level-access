@@ -1,20 +1,34 @@
 # Google Cloud BigQuery - Row Level Access Policy Helper
 
-A BigQuery Remote function to query and view row-level access policies since Row Level Access Policies are currently viewable via the API and `bq` CLI. 
+A BigQuery Remote function to query and view row-level access policies since Row Level Access Policies are currently viewable via the API and `bq` CLI.
 
-To begin, Open Cloud shell and follow the steps below.
+## Summary
 
-@TODO - update this link  
+The workflow is as follows:
 
-[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://shell.cloud.google.com/cloudshell/editor)
+* Setup GCP environment - enable APIs, BQ connection
+* Setup data in BigQuery - load data and implement example row-level security policies
+* Setup Google Cloud function - Python function to call the BQ API (`rowAccessPolicies` method)
+* Create BigQuery UDF - from Google Cloud Function  
+* Use BigQuery UDF - to get rowAccessPolicies within SQL 
 
-## enable apis
+
+## Getting Started
+
+To begin, follow the steps below in Cloud Shell and/or the Cloud Console. To clone this repository and work directly in Cloud Shell (recommended), click the buttom below:
+
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://shell.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/justinjm/gcp-bigquery-row-level-access)
+
+
+## Setup GCP environment 
+
+### Enable apis
 
 ```sh
 gcloud services enable bigqueryconnection.googleapis.com
 ```
 
-## Setup connection
+### Setup connection
 
 ```sh
 gcloud components update
@@ -27,19 +41,25 @@ Show connection info and copy service account, you will need this in a later ste
 bq show --location=US --connection gcf-conn
 ```
 
-## Setup Data
+## Setup BigQuery 
 
-Create a dataset and then load the 2 example csv files into BQ 
+### Load Data
+
+Create a BQ dataset and then load the 2 example csv files from this repository into 2 BQ tables
 
 ```sh
-# bq mk z_test 
+bq mk -d z_test 
 ```
 
 ```sh
-# bq mk
+# bq load crm_account.csv
 ```
 
-Create 2 tables in a single dataset
+```sh
+# bq load crm_users.csv
+```
+
+Then, create row level access policies for each table 
 
 1. crm_account_rsl
 
@@ -61,10 +81,12 @@ FILTER USING(Country_Code = 'US')
 
 ## Setup Google Cloud Function
 
+Navigate to [Cloud Functions](https://console.cloud.google.com/functions) within the Google Cloud console and setup a Cloud function as follows: 
+
 * Cloud function v1
-* https
-* defaults
-* source: copy `main.py` into the source
+* type = https
+* leave the rest as defaults and click next 
+* In the source tab, copy `main.py` 
 * change entry point to `get_row_access_polices`
 * click deploy
 
@@ -88,20 +110,24 @@ gcloud functions add-iam-policy-binding bq-table-row-access-policies \
     --role=roles/cloudfunctions.invoker
 ```
 
-## make test call
+### Test Cloud Function 
 
-after deployment, test with sample values:
+After deployment completes, test with sample values:
 
 ```txt
 {
   "calls": [
-      ["demos-vertex-ai", "z_test", "crm_account_rsl"]
+      ["your-project-id", "z_test", "crm_account"]
+      ["your-project-id", "z_test", "crm_user"]
   ]
 }
-
 ```
 
+You should see a repsonse with the `rowAccessPolicies` as the main object. 
+
 ## Create BigQuery UDF
+
+Now, navigate to BigQuery UI and run the following SQL to create a BigQuery UDF 
 
 ```sql
 CREATE OR REPLACE FUNCTION
@@ -117,6 +143,8 @@ WITH CONNECTION `demos-vertex-ai.us.gcf-conn` OPTIONS (
 
 ## Invoke remote function from BigQuery
 
+Finally, use the UDF (and Remote Function) in a SQL query from the `INFORMATION_SCHEMA`: 
+
 ```sql
 SELECT
   table_catalog,
@@ -127,7 +155,7 @@ FROM
   z_test.INFORMATION_SCHEMA.TABLES
 ```
 
-<https://cloud.google.com/bigquery/docs/reference/standard-sql/json_functions#string_for_json>
+A more robust query to format the raw JSON response into columns: 
 
 ```sql
 WITH data AS (
@@ -148,6 +176,8 @@ SELECT
 
 FROM data
 ```
+
+<https://cloud.google.com/bigquery/docs/reference/standard-sql/json_functions#string_for_json>
 
 ## Resources
 
