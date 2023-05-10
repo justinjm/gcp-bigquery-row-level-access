@@ -14,9 +14,11 @@ The workflow is as follows:
 
 ## Getting Started
 
-To begin, follow the steps below in Cloud Shell and/or the Cloud Console. To clone this repository and work directly in Cloud Shell (recommended), click the buttom below:
+To begin, follow the steps below in Cloud Shell and/or the Cloud Console. To clone this repository and work directly in Cloud Shell (recommended)
 
-[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://ssh.cloud.google.com/cloudshell/editor?cloudshell_git_repo=https://github.com/justinjm/gcp-bigquery-row-level-access)
+1. Click [here](https://shell.cloud.google.com/?show=ide%2Cterminal) to Open a Cloud Shell session
+2. Set your project by running `gcloud config set project [PROJECT_ID]` 
+3. clone this repository: `git clone https://github.com/justinjm/gcp-bigquery-row-level-access`
 
 
 ## Setup GCP environment 
