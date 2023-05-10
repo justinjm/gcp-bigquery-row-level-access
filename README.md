@@ -216,7 +216,12 @@ SELECT
 FROM data
 ```
 
-<https://cloud.google.com/bigquery/docs/reference/standard-sql/json_functions#string_for_json>
+![](img/bq-results.png)
+
+References:
+
+* <https://cloud.google.com/bigquery/docs/reference/standard-sql/json_functions#string_for_json>
+* <https://cloud.google.com/bigquery/docs/information-schema-tables>
 
 ## Resources
 
