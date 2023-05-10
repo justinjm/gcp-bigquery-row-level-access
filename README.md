@@ -12,7 +12,6 @@ The workflow is as follows:
 * Create BigQuery UDF - from Google Cloud Function  
 * Use BigQuery UDF - to get rowAccessPolicies within SQL 
 
-
 ## Getting Started
 
 To begin, follow the steps below in Cloud Shell and/or the Cloud Console. To clone this repository and work directly in Cloud Shell (recommended), click the buttom below:
@@ -45,36 +44,44 @@ bq show --location=US --connection gcf-conn
 
 ### Load Data
 
-Create a BQ dataset and then load the 2 example csv files from this repository into 2 BQ tables
+First, we create a BQ dataset
 
 ```sh
 bq mk -d z_test 
 ```
 
+and then load the 2 example csv files from this repository into 2 BQ tables
+
 ```sh
-# bq load crm_account.csv
+bq load --autodetect \
+    --source_format=CSV \
+    demos-vertex-ai:z_test2.crm_account \
+    ./data/crm_account.csv
 ```
 
 ```sh
-# bq load crm_users.csv
+bq load --autodetect \
+    --source_format=CSV \
+    demos-vertex-ai:z_test2.crm_user \
+    ./data/crm_user.csv
 ```
 
-Then, create row level access policies for each table 
+Then, create row level access policies for each table
 
-1. crm_account_rsl
+1. crm_account
 
 ```sql
 CREATE ROW ACCESS POLICY crm_account_filter
-ON `demos-vertex-ai.z_test.crm_account_rsl`
+ON `demos-vertex-ai.z_test.crm_account`
 GRANT TO('user:bruce@justinjm.altostrat.com')
 FILTER USING(State_Code='CA')
 ```
 
-2. crm_user_rsl
+2. crm_user
 
 ```sql
 CREATE ROW ACCESS POLICY crm_user_filter
-ON `demos-vertex-ai.z_test.crm_user_rsl`
+ON `demos-vertex-ai.z_test.crm_user`
 GRANT TO('user:bruce@justinjm.altostrat.com')
 FILTER USING(Country_Code = 'US')
 ```
@@ -94,7 +101,7 @@ Navigate to [Cloud Functions](https://console.cloud.google.com/functions) within
 
 While GCF is deploying, grant account access in 2 places
 
-1. the app engine default service account BigQuery permissions (you can remove/adjust this later) so that the cloud
+1. the app engine default service account BigQuery permissions  so that the cloud function can access BQ (you can remove/adjust this later):
 
 ```sh
 gcloud projects add-iam-policy-binding demos-vertex-ai \
@@ -102,7 +109,7 @@ gcloud projects add-iam-policy-binding demos-vertex-ai \
     --role=roles/bigquery.admin
 ```
 
-2. Grant
+2. Grant service account from BQ connection created earlier to allow BQ to invoke the Cloud Function from SQL:
 
 ```sh
 gcloud functions add-iam-policy-binding bq-table-row-access-policies \
@@ -127,7 +134,7 @@ You should see a repsonse with the `rowAccessPolicies` as the main object.
 
 ## Create BigQuery UDF
 
-Now, navigate to BigQuery UI and run the following SQL to create a BigQuery UDF 
+Now, navigate to BigQuery UI and run the following SQL to create a BigQuery UDF
 
 ```sql
 CREATE OR REPLACE FUNCTION
