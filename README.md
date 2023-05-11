@@ -20,7 +20,7 @@ This tutorial will walkthrough the following workflow to setup a Bigquery [Remot
 
 **Recommendation:** To get started, follow this tutorial within the Google Cloud Console UI (Cloud Shell) by clickly the button (below) if you aren't already:
 
-[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/justinjm/gcp-bigquery-row-level-access&page=editor&tutorial=README.md)
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/bigquery/?cloudshell_git_repo=https://github.com/justinjm/gcp-bigquery-row-level-access&cloudshell_tutorial=README.md)
 
 Alternatively, can work from your local machine by 1) installing the [`gcloud` CLI](https://cloud.google.com/sdk/docs/install-sdk) and then 2) cloniog this repository via:  
 
