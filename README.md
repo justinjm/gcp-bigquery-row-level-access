@@ -100,7 +100,10 @@ bq load --autodetect \
 
 ### Create row level access polices 
 
-Then, we create row level access policies for each table by running the following SQL queries from within the [BigQuery console](https://console.cloud.google.com/bigquery):
+Then, we create row level access policies for each table by running the following SQL queries from within the [BigQuery](https://cloud.google.com/bigquery) console. Click the button below to be shown the way:
+
+<walkthrough-menu-navigation sectionId="BIGQUERY_SECTION">BigQuery</walkthrough-menu-navigation>
+
 
 #### 1. crm_account policy
 
@@ -122,7 +125,7 @@ FILTER USING(Country_Code='US')
 
 ## Setup Google Cloud Function
 
-Now that our sample data is loaded in BigQuery, let's avigate to [Cloud Functions](https://console.cloud.google.com/functions) within the Google Cloud console and setup a Cloud function as follows. For this workflow, we will use 1st Gen Cloud functions.  
+Now that our sample data is loaded in BigQuery, let's avigate to [Cloud Functions](https://console.cloud.google.com/functions) within the Google Cloud console and setup a Cloud function as follows. For this workflow, we will use 1st Gen Cloud functions.  Click the button below to be shown the way:
 
 <walkthrough-menu-navigation sectionId="FUNCTIONS_SECTION">Cloud Functions</walkthrough-menu-navigation>
 
