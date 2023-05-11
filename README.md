@@ -198,7 +198,9 @@ You should see a repsonse with the `rowAccessPolicies` as the main object.
 
 ## Create BigQuery UDF
 
-Now, navigate to the [BigQuery console](https://console.cloud.google.com/bigquery)  and run the following SQL to create a BigQuery UDF from the Cloud Function we just created:
+Now, back to the [BigQuery console](https://console.cloud.google.com/bigquery)  and run the following SQL to create a BigQuery UDF from the Cloud Function we just created:
+
+<walkthrough-menu-navigation sectionId="BIGQUERY_SECTION">BigQuery</walkthrough-menu-navigation>
 
 ```sql
 CREATE OR REPLACE FUNCTION
@@ -214,7 +216,7 @@ WITH CONNECTION `your-project-id.us.gcf-conn` OPTIONS (
 
 ## Invoke remote function from BigQuery
 
-Finally, use the Remote Function in a SQL query from the BigQuery [`INFORMATION_SCHEMA`](https://cloud.google.com/bigquery/docs/information-schema-tables): 
+Finally, use the Remote Function in a SQL query from the BigQuery [`INFORMATION_SCHEMA.TABLES` view](https://cloud.google.com/bigquery/docs/information-schema-tables):
 
 ```sql
 SELECT
