@@ -4,7 +4,7 @@ A [BigQuery Remote Function](https://cloud.google.com/bigquery/docs/reference/st
 
 For an interactive tutorial within the Google Cloud Console and using [Cloud Shell](https://cloud.google.com/shell) click the button below:
 
-[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/justinjm/gcp-bigquery-row-level-access&page=editor&tutorial=README.md)
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/bigquery/?cloudshell_git_repo=https://github.com/justinjm/gcp-bigquery-row-level-access&cloudshell_tutorial=README.md)
 
 ## Summary
 
@@ -34,8 +34,13 @@ git clone https://github.com/justinjm/gcp-bigquery-row-level-access \
 Set your desired project ID as an environment variable in your shell for use in later steps:
 
 ```sh
-export PROJECT_ID="your-project-id"
-echo $PROJECT_ID
+PROJECT_ID=$(gcloud config get-value project)
+```
+
+If for some reason you do not have a project set, run the following and replace `your-project-id`:
+
+```sh
+export PROJECT_ID="your-project-id" && echo $PROJECT_ID
 gcloud config set project $PROJECT_ID
 ```
 
@@ -82,14 +87,14 @@ And then load the 2 example csv files from this repository into 2 BQ tables:
 ```sh
 bq load --autodetect \
     --source_format=CSV \
-    $PROJECT_ID:z_test.crm_account \
+    z_test.crm_account \
     ./data/crm_account.csv
 ```
 
 ```sh
 bq load --autodetect \
     --source_format=CSV \
-    $PROJECT_ID:z_test.crm_user \
+    z_test.crm_user \
     ./data/crm_user.csv
 ```
 
@@ -163,7 +168,7 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
     --role=roles/bigquery.admin
 ```
 
-2. Grant service account from BQ connection `get-row-access-policies` created earlier via`bq mk --connection` to allow BQ to invoke the Cloud Function from SQL:
+1. Grant service account from BQ connection `get-row-access-policies` created earlier via`bq mk --connection` to allow BQ to invoke the Cloud Function from SQL (i.e. - replace `your-service-account`):
 
 ```sh
 gcloud functions add-iam-policy-binding get-row-access-policies \
@@ -173,7 +178,7 @@ gcloud functions add-iam-policy-binding get-row-access-policies \
 
 ### Test Cloud Function
 
-After deployment of the Cloud Function completes, test with sample values:
+After deployment of the Cloud Function completes, test with sample values (replacing `your-project-id`):
 
 ```txt
 {
