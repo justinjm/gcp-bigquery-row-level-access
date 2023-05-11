@@ -124,6 +124,8 @@ FILTER USING(Country_Code='US')
 
 Now that our sample data is loaded in BigQuery, let's avigate to [Cloud Functions](https://console.cloud.google.com/functions) within the Google Cloud console and setup a Cloud function as follows. For this workflow, we will use 1st Gen Cloud functions.  
 
+<walkthrough-menu-navigation sectionId="FUNCTIONS_SECTION">Cloud Functions</walkthrough-menu-navigation>
+
 ### 1. Configuration
 
 On the configuration page, configure the following settings:
