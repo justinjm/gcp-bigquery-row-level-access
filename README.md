@@ -18,21 +18,25 @@ This tutorial will walkthrough the following workflow to setup a Bigquery [Remot
 
 ## Getting Started
 
-**Recommendation:** To get started, follow this tutorial within the Google Cloud Console UI (Cloud Shell) by clickly the button above.
+**Recommendation:** To get started, follow this tutorial within the Google Cloud Console UI (Cloud Shell) by clickly the button (below) if you aren't already:
 
-Alternative, clone this repository on your local machine with the [`gcloud` CLI](https://cloud.google.com/sdk/docs/install-sdk) installed:  
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/justinjm/gcp-bigquery-row-level-access&page=editor&tutorial=README.md)
+
+Alternatively, can work from your local machine by 1) installing the [`gcloud` CLI](https://cloud.google.com/sdk/docs/install-sdk) and then 2) cloniog this repository via:  
 
 ```sh
 git clone https://github.com/justinjm/gcp-bigquery-row-level-access \
   && cd gcp-bigquery-row-level-access/
 ```
+
 ### Set project ID environment variable
 
 Set your desired project ID as an environment variable in your shell for use in later steps:
 
 ```sh
-PROJECT_ID=$(gcloud config get-value project)
+export PROJECT_ID="your-project-id"
 echo $PROJECT_ID
+gcloud config set project $PROJECT_ID
 ```
 
 ## Setup GCP environment
@@ -67,7 +71,7 @@ bq show --location=US --connection gcf-conn
 
 ### Load Data
 
-First, we create a BQ dataset called `z_test` in the [BigQuery console](https://console.cloud.google.com/bigquery) or running the commands below:
+First, we create a BQ dataset called `z_test` in the [BigQuery console](https://console.cloud.google.com/bigquery) or running the `bq` CLI commands below:
 
 ```sh
 bq mk -d z_test 
@@ -89,7 +93,9 @@ bq load --autodetect \
     ./data/crm_user.csv
 ```
 
-Then, create row level access policies for each table
+### Create row level access polices 
+
+Then, we create row level access policies for each table by running the following SQL queries from within the [BigQuery console](https://console.cloud.google.com/bigquery):
 
 #### 1. crm_account policy
 
