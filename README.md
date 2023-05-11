@@ -1,10 +1,15 @@
-# Google Cloud BigQuery - Row Level Access Policy Helper
+# Google Cloud BigQuery Row Level Access Policy Remote Function 
 
-A BigQuery Remote function to query and view row-level access policies since Row Level Access Policies are currently viewable via the API and `bq` CLI.
+A [BigQuery Remote Function](https://cloud.google.com/bigquery/docs/reference/standard-sql/remote-functions) for row-level access policies.
+
+To begin, click the button below:
+
+[![Open in Cloud Shell](https://gstatic.com/cloudssh/images/open-btn.svg)](https://console.cloud.google.com/cloudshell/open?git_repo=https://github.com/justinjm/gcp-bigquery-row-level-access&page=editor&tutorial=README.md)
+
 
 ## Summary
 
-The workflow is as follows:
+This tutorial will walkthrough the following workflow:
 
 * Setup GCP environment - enable APIs, BQ connection
 * Setup data in BigQuery - load data and implement example row-level security policies
@@ -19,6 +24,7 @@ To begin, follow the steps below in Cloud Shell and/or the Cloud Console. To clo
 1. Click [here](https://shell.cloud.google.com/?show=ide%2Cterminal) to Open a Cloud Shell session
 2. Set your project by running `gcloud config set project [PROJECT_ID]` 
 3. clone this repository: `git clone https://github.com/justinjm/gcp-bigquery-row-level-access`
+
 
 
 ## Setup GCP environment 
