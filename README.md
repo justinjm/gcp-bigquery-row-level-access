@@ -11,27 +11,31 @@ For an interactive tutorial within the Google Cloud Console and using [Cloud She
 This tutorial will walkthrough the following workflow to setup a Bigquery [Remote Function](https://cloud.google.com/bigquery/docs/reference/standard-sql/remote-functions):
 
 * Setup GCP environment - enable APIs, connection between BigQuery and Cloud Functions
-* Setup data in BigQuery - load data and implement example row-level security policies
-* Setup Google Cloud Function - Python function to call the BQ API (`rowAccessPolicies` method)
-* Create BigQuery Remote Function - as a User Defined Function (UDF) from Google Cloud Function  
-* Use BigQuery UDF - to get rowAccessPolicies within SQL
+* Setup data in BigQuery - load data and implement example [row-level security policies](https://cloud.google.com/bigquery/docs/managing-row-level-security)
+* Setup Google Cloud Function - Python function to call the BQ API ([`rowAccessPolicies` method](https://cloud.google.com/bigquery/docs/reference/rest/v2/rowAccessPolicies/list#RowAccessPolicy))
+* Create [BigQuery Remote Function](https://cloud.google.com/bigquery/docs/reference/standard-sql/remote-functions) - as a [BigQuery User Defined Function (UDF)](https://cloud.google.com/bigquery/docs/reference/standard-sql/user-defined-functions) from a Google Cloud Function  
+* Use BigQuery UDF - to fetch a BigQuery table's row-level access policies within BigQuery SQL
 
 ## Getting Started
 
-To begin, follow the steps below in Cloud Shell and/or the Cloud Console. To clone this repository and work directly in Cloud Shell (recommended)
+**Recommendation:** To get started, follow this tutorial within the Google Cloud Console UI (Cloud Shell) by clickly the button above.
 
-1. Click [here](https://shell.cloud.google.com/?show=ide%2Cterminal) to Open a Cloud Shell session
-2. Set your project by running `gcloud config set project [PROJECT_ID]`
-3. clone this repository: `git clone https://github.com/justinjm/gcp-bigquery-row-level-access`
+Alternative, clone this repository on your local machine with the [`gcloud` CLI](https://cloud.google.com/sdk/docs/install-sdk) installed:  
 
-## Setup GCP environment
-
+```sh
+git clone https://github.com/justinjm/gcp-bigquery-row-level-access \
+  && cd gcp-bigquery-row-level-access/
+```
 ### Set project ID environment variable
+
+Set your desired project ID as an environment variable in your shell for use in later steps:
 
 ```sh
 PROJECT_ID=$(gcloud config get-value project)
 echo $PROJECT_ID
 ```
+
+## Setup GCP environment
 
 ### Enable apis
 
@@ -41,7 +45,7 @@ First, enable the following APIs within the [GCP web console](https://console.de
 gcloud services enable bigqueryconnection.googleapis.com
 ```
 
-### Setup connection 
+### Setup connection
 
 Create a [connection](https://cloud.google.com/bigquery/docs/reference/standard-sql/remote-functions#create_a_connection) between BigQuery and Cloud Functions
 
