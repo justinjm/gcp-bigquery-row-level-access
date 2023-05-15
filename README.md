@@ -40,7 +40,7 @@ PROJECT_ID=$(gcloud config get-value project)
 If for some reason you do not have a project set, run the following and replace `your-project-id`:
 
 ```sh
-export PROJECT_ID="your-project-id" && echo $PROJECT_ID
+export PROJECT_ID="demos-vertex-ai" && echo $PROJECT_ID
 gcloud config set project $PROJECT_ID
 ```
 
@@ -110,7 +110,7 @@ Then, we create row level access policies for each table by running the followin
 ```sql
 CREATE ROW ACCESS POLICY crm_account_filter
 ON `z_test.crm_account`
-GRANT TO('user:your-email@domain.com')
+GRANT TO('user:bruce@justinjm.altostrat.com')
 FILTER USING(State_Code='CA')
 ```
 
@@ -173,11 +173,11 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
     --role=roles/bigquery.admin
 ```
 
-1. Grant service account from BQ connection `get-row-access-policies` created earlier via`bq mk --connection` to allow BQ to invoke the Cloud Function from SQL (i.e. - replace `your-service-account`):
+1. Grant service account of BQ connection `get-row-access-policies` created earlier via`bq mk --connection` to allow BQ to invoke the Cloud Function `bq-table-row-access-policies` from SQL (i.e. - replace`your-service-account`):
 
 ```sh
-gcloud functions add-iam-policy-binding get-row-access-policies \
-    --member=serviceAccount:your-service-account@gcp-sa-bigquery-condel.iam.gserviceaccount.com \
+gcloud functions add-iam-policy-binding bq-table-row-access-policies \
+    --member=serviceAccount:bqcx-746038361521-agnk@gcp-sa-bigquery-condel.iam.gserviceaccount.com \
     --role=roles/cloudfunctions.invoker
 ```
 
@@ -185,10 +185,10 @@ gcloud functions add-iam-policy-binding get-row-access-policies \
 
 After deployment of the Cloud Function completes, test with sample values (replacing `your-project-id`):
 
-```txt
+```json
 {
   "calls": [
-      ["your-project-id", "z_test", "crm_account"]
+      ["your-project-id", "z_test", "crm_account"],
       ["your-project-id", "z_test", "crm_user"]
   ]
 }
@@ -209,9 +209,9 @@ CREATE OR REPLACE FUNCTION
     table_name STRING)
   RETURNS STRING REMOTE
   -- change this to reflect your PROJECT ID
-WITH CONNECTION `your-project-id.us.gcf-conn` OPTIONS (
+WITH CONNECTION `demos-vertex-ai.us.gcf-conn` OPTIONS (
     -- change this to reflect the Trigger URL of your cloud function (look for the TRIGGER tab)
-    endpoint = 'https://us-central1-your-project-id.cloudfunctions.net/get-row-access-policies' )
+    endpoint = 'https://us-central1-demos-vertex-ai.cloudfunctions.net/bq-table-row-access-policies' )
 ```
 
 ## Invoke remote function from BigQuery
