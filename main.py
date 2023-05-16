@@ -33,9 +33,6 @@ def get_row_access_polices(request):
         # append results to replies (output)
         replies.append(response.json())
 
-        # sleep for 100ms to avoid hitting API quotas
-        time.sleep(0.1)
-
     return json.dumps({
         'replies': [json.dumps(reply) for reply in replies]
     })
