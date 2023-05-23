@@ -173,13 +173,24 @@ gcloud projects add-iam-policy-binding $PROJECT_ID \
     --role=roles/bigquery.admin
 ```
 
-1. Grant service account of BQ connection `get-row-access-policies` created earlier via`bq mk --connection` to allow BQ to invoke the Cloud Function `bq-table-row-access-policies` from SQL (i.e. - replace`your-service-account`):
+1. Grant service account of BQ connection `get-row-access-policies` created earlier via`bq mk --connection` to allow BQ to invoke the Cloud Function `bq-table-row-access-policies2` from SQL (i.e. - replace`your-service-account`):
 
 ```sh
-gcloud functions add-iam-policy-binding bq-table-row-access-policies \
+gcloud functions add-iam-policy-binding bq-table-row-access-policies2 \
     --member=serviceAccount:bqcx-746038361521-agnk@gcp-sa-bigquery-condel.iam.gserviceaccount.com \
     --role=roles/cloudfunctions.invoker
 ```
+
+#### Second generation cloud functions 
+
+`WARNING: The role [roles/cloudfunctions.invoker] was successfully bound to member [serviceAccount:bqcx-746038361521-agnk@gcp-sa-bigquery-condel.iam.gserviceaccount.com] but this does not grant the member permission to invoke 2nd gen function [bq-table-row-access-policies2]. Instead, the role [roles/run.invoker] must be granted on the underlying Cloud Run service. This can be done by running the `gcloud functions add-invoker-policy-binding` command.`
+
+```sh
+gcloud functions add-invoker-policy-binding bq-table-row-access-policies2 \
+    --member=serviceAccount:bqcx-746038361521-agnk@gcp-sa-bigquery-condel.iam.gserviceaccount.com \
+    --role=roles/cloudfunctions.invoker
+```
+
 
 ### Test Cloud Function
 
@@ -204,14 +215,14 @@ Now, back to the [BigQuery console](https://console.cloud.google.com/bigquery)  
 
 ```sql
 CREATE OR REPLACE FUNCTION
-  z_test.get_row_access_policies(table_catalog STRING,
+  z_test.get_row_access_policies2(table_catalog STRING,
     table_schema STRING,
     table_name STRING)
   RETURNS STRING REMOTE
   -- change this to reflect your PROJECT ID
 WITH CONNECTION `demos-vertex-ai.us.gcf-conn` OPTIONS (
     -- change this to reflect the Trigger URL of your cloud function (look for the TRIGGER tab)
-    endpoint = 'https://us-central1-demos-vertex-ai.cloudfunctions.net/bq-table-row-access-policies' )
+    endpoint = 'https://bq-table-row-access-policies2-fjuwtt6ysq-uc.a.run.app' )
 ```
 
 ## Invoke remote function from BigQuery
