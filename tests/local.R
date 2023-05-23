@@ -13,31 +13,20 @@ library(googleAuthR)
 
 gar_auth(email = Sys.getenv("GARGLE_AUTH_EMAIL"))
 
+## confirm auth successful with simple api calls
 # bq_project_datasets(projectId)
-
 # rls <- get_rls_policies(projectId, datasetId, tableId)
 # rls$rowAccessPolicies
 
-# manual ---------------------------------------------------------------------
-# Specify the number of rows in the dataframe then build it
-# using a BQ table with a row level access policy applied 
-# num_rows <- 100
-# df <- data.frame(
-#   table_catalog = rep("demos-vertex-ai", num_rows),
-#   table_schema = rep("z_test", num_rows),
-#   table_name = rep("crm_account", num_rows)
-# )
-
-# result <- apply(df, 1, function(row) get_rls_policies(row['table_catalog'], row['table_schema'], row['table_name']))
-# result
-
-
 # function ---------------------------------------------------------------------
-stress_test <- function(num_rows){
+stress_test <- function(projectId,
+                        datasetId,
+                        tableId,
+                        num_rows){
   df <- data.frame(
-    table_catalog = rep("demos-vertex-ai", num_rows),
-    table_schema = rep("z_test", num_rows),
-    table_name = rep("crm_account", num_rows)
+    table_catalog = rep(projectId, num_rows),
+    table_schema = rep(datasetId, num_rows),
+    table_name = rep(tableId, num_rows)
   )
   start.time <- Sys.time()
   result <- apply(df, 1, function(row) get_rls_policies(
@@ -50,7 +39,7 @@ stress_test <- function(num_rows){
   return(result)
 }
 
-stress_test(num_rows=5)
+results <- stress_test(projectId, datasetId, tableId, num_rows = 3)
 
 # gar_debug_parsing(filename = "gar_parse_error.rds")
 
