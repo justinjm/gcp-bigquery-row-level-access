@@ -44,8 +44,12 @@ stress_test <- function(projectId,
 }
 
 # execute  ---------------------------------------------------------------------
-results <- stress_test(projectId, datasetId, tableId, num_rows = 3)
+results <- stress_test(projectId, datasetId, tableId, num_rows = 10000)
 length(results)
+
+## save results for sharing
+outfile <- paste0("data/results-", format(Sys.time(), "%Y%m%d%H%M%S"), ".rds")
+saveRDS(results, outfile)
 
 ## Debug 
 # gar_debug_parsing(filename = "gar_parse_error.rds")
