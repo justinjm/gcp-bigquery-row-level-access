@@ -34,12 +34,14 @@ stress_test <- function(projectId,
     )
 
   end.time <- Sys.time()
-  time.taken <- end.time - start.time
-  print(paste("Time taken: ", time.taken))
+  time.taken <- as.numeric(end.time - start.time, units = "secs")
+  print(paste("Time taken: ", time.taken, "seconds"))
   return(result)
 }
 
-results <- stress_test(projectId, datasetId, tableId, num_rows = 3)
+results <- stress_test(projectId, datasetId, tableId, num_rows = 10000)
+length(results)
+
 
 # gar_debug_parsing(filename = "gar_parse_error.rds")
 
