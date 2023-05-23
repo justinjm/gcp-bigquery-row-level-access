@@ -7,15 +7,14 @@ import time
 
 def get_row_access_polices(request,
                            local = False):
-    
     if local:
         request_json = request
     else: 
         request_json = request.get_json(silent=True)
-    
     replies = []
     calls = request_json['calls']
-    for call in calls:
+    for i, call in enumerate(calls, 1):
+        print(f"API call #: {i}")
         # set tableId as variable for passing into rowAccessPolicies API call
         projectId = call[0]
         datasetId = call[1]
@@ -39,8 +38,6 @@ def get_row_access_polices(request,
 
         if local:
             print(response.json())
-        
-        time.sleep(0.1)
 
         # append results to replies (output)
         replies.append(response.json())

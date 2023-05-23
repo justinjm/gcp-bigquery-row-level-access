@@ -21,9 +21,3 @@ with open('example_requests.json', 'r') as f:
 
 # Use myfunction as needed
 get_row_access_polices(request, local = True)
-
-
-
-
-
-

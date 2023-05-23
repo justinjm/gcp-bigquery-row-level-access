@@ -14,7 +14,7 @@ obj = {
     ]
 }
 
-for _ in range(5):
+for _ in range(10000):
     obj["calls"].append(["demos-vertex-ai", "z_test", "crm_account"])
 
 # Write the modified object to a new file
