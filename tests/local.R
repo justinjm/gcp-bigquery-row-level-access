@@ -6,17 +6,15 @@ datasetId <- Sys.getenv("DATASET")
 tableId <- Sys.getenv("TABLE")
 
 options(googleAuthR.scopes.selected = "https://www.googleapis.com/auth/cloud-platform")
-options(googleAuthR.verbose = 0) # set when debugging
-# options(gargle_verbosity = "debug") # set when debugging
+# options(googleAuthR.verbose = 0) # set when debugging
 
+# authentication ---------------------------------------------------------------
 library(googleAuthR)
-
 gar_auth(email = Sys.getenv("GARGLE_AUTH_EMAIL"))
 
 ## confirm auth successful with simple api calls
-# bq_project_datasets(projectId)
-# rls <- get_rls_policies(projectId, datasetId, tableId)
-# rls$rowAccessPolicies
+rls <- get_rls_policies(projectId, datasetId, tableId)
+rls$rowAccessPolicies
 
 # function ---------------------------------------------------------------------
 stress_test <- function(projectId,
@@ -29,21 +27,30 @@ stress_test <- function(projectId,
     table_name = rep(tableId, num_rows)
   )
   start.time <- Sys.time()
-  result <- apply(df, 1, function(row) get_rls_policies(
-    row["table_catalog"], row["table_schema"], row["table_name"])
-    )
-
+  
+  counter <- 1
+  result <- apply(df, 1, function(row) {
+    cat("[?] Row number: ", counter, "======================================\n")
+    counter <<- counter + 1
+    get_rls_policies(row["table_catalog"],row["table_schema"],row["table_name"])
+  }
+  )
+  
   end.time <- Sys.time()
   time.taken <- as.numeric(end.time - start.time, units = "secs")
   print(paste("Time taken: ", time.taken, "seconds"))
+  print(paste("Number of API calls:", counter - 1))
   return(result)
 }
 
-results <- stress_test(projectId, datasetId, tableId, num_rows = 10000)
+# execute  ---------------------------------------------------------------------
+results <- stress_test(projectId, datasetId, tableId, num_rows = 3)
 length(results)
 
-
+## Debug 
 # gar_debug_parsing(filename = "gar_parse_error.rds")
 
+## references
 # https://cran.r-project.org/web/packages/gargle/vignettes/troubleshooting.html
 # https://cloud.google.com/bigquery/docs/reference/rest/v2/rowAccessPolicies/list?apix=true
+# https://www.r-bloggers.com/2021/08/r-a-combined-usage-of-split-lapply-and-do-call/
