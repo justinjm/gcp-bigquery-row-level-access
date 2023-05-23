@@ -5,8 +5,14 @@ from google.auth.transport.requests import Request
 import time
 
 
-def get_row_access_polices(request):
-    request_json = request.get_json(silent=True)
+def get_row_access_polices(request,
+                           local = False):
+    
+    if local:
+        request_json = request
+    else: 
+        request_json = request.get_json(silent=True)
+    
     replies = []
     calls = request_json['calls']
     for call in calls:
@@ -31,6 +37,9 @@ def get_row_access_polices(request):
         # Send the query using the requests module
         response = requests.get(url, headers=headers)
 
+        if local:
+            print(response.json())
+        
         time.sleep(0.1)
 
         # append results to replies (output)

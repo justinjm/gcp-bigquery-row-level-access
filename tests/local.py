@@ -2,31 +2,40 @@ import requests
 from google.auth import default
 from google.auth.transport.requests import Request
 import time
+import sys
+import os
+import json
 
-projectId = "demos-vertex-ai"
-datasetId = "z_test"
-tableId = "crm_account"
+# Add the main directory to the system path
+script_path = os.path.abspath(__file__)
+script_dir = os.path.dirname(script_path)
+main_dir = os.path.dirname(script_dir)
+sys.path.append(main_dir)
 
-# Set the URL for the BigQuery API endpoint
-url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
+# Import the function from main.py
+from main import get_row_access_polices
 
-# Use the default credentials to obtain an access token
-creds, _ = default(scopes=["https://www.googleapis.com/auth/bigquery"])
-creds.refresh(Request())
 
-# Set the authorization header using the access token
-headers = {
-    "Authorization": f"Bearer {creds.token}",
-    "Content-Type": "application/json"
+# load sample json data 
+request = {
+    "requestId": "124ab1c",
+    "caller": "//bigquery.googleapis.com/projects/myproject/jobs/myproject:US.bquxjob_5b4c112c_17961fafeaf",
+    "sessionUser": "test-user@test-company.com",
+    "userDefinedContext": {
+        "key1": "value1",
+        "key2": "v2"
+    },
+    "calls": [
+        ["demos-vertex-ai", "z_test", "crm_account"],
+        ["demos-vertex-ai", "z_test", "crm_account"]
+    ]
 }
 
-# Send the query using the requests module
-response = requests.get(url, headers=headers)
+# Use myfunction as needed
+get_row_access_polices(request, local = True)
 
-print(response.json())
 
-# # append results to replies (output)
-# replies.append(response.json())
 
-# return json.dumps({
-# 'replies': [json.dumps(reply) for reply in replies]
+
+
+
