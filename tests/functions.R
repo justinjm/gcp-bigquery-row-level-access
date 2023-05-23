@@ -11,7 +11,7 @@ get_rls_policies <- function(projectId,
   
   
   f <- googleAuthR::gar_api_generator(url,
-                                      "POST",
+                                      "GET",
                                       data_parse_function = function(x) x,
                                       checkTrailingSlash = TRUE)
 
