@@ -1,5 +1,4 @@
 import json
-import requests
 
 obj = {
     "requestId": "124ab1c",
@@ -15,10 +14,8 @@ obj = {
     ]
 }
 
-for _ in range(10):
+for _ in range(10000):
     obj["calls"].append(["demos-vertex-ai", "z_test", "crm_account"])
-
-print(obj)
 
 # Write the modified object to a new file
 with open('example_requests.json', 'w') as f:
