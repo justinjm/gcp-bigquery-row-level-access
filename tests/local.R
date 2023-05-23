@@ -1,14 +1,15 @@
-source("tests/functions.R")
-
+# set constants 
 email <- Sys.getenv("GAR_AUTH_EMAIL")
 projectId <- Sys.getenv("PROJECT")
 datasetId <- Sys.getenv("DATASET")
 tableId <- Sys.getenv("TABLE")
 
+# authentication ---------------------------------------------------------------
+# set options for auth and debugging if needed
 options(googleAuthR.scopes.selected = "https://www.googleapis.com/auth/cloud-platform")
 # options(googleAuthR.verbose = 0) # set when debugging
 
-# authentication ---------------------------------------------------------------
+## authenticate 
 library(googleAuthR)
 gar_auth(email = Sys.getenv("GARGLE_AUTH_EMAIL"))
 
@@ -17,6 +18,29 @@ rls <- get_rls_policies(projectId, datasetId, tableId)
 rls$rowAccessPolicies
 
 # function ---------------------------------------------------------------------
+get_rls_policies <- function(projectId,
+                             datasetId,
+                             tableId) {
+  url <- sprintf(
+    "https://bigquery.googleapis.com/bigquery/v2/projects/%s/datasets/%s/tables/%s/rowAccessPolicies",
+    projectId,
+    datasetId,
+    tableId
+  )
+
+  f <- googleAuthR::gar_api_generator(url,
+    "GET",
+    data_parse_function = function(x) x,
+    checkTrailingSlash = TRUE
+  )
+
+  response <- f()
+
+  response
+}
+
+
+# stress test -----------------------------------------------------------------
 stress_test <- function(projectId,
                         datasetId,
                         tableId,
