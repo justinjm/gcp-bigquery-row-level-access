@@ -1,78 +1,64 @@
 import asyncio
-from aiohttp import ClientSession
-from google.auth.transport.requests import Request
-from google.auth import default
-from typing import List
 import json
+import requests
+from google.auth import default
+from google.auth.transport.requests import Request
+import time
 
 
-async def get_row_access_polices(request,
-                                 local=False):
-    if local:
-        request_json = request
-    else:
-        request_json = request.get_json(silent=True)
+async def get_row_access_policies(request):
+    # request_json = request.get_json(silent=True) # CLOUD FUNCTION
+    request_json = request # LOCAL TESTING
     replies = []
     calls = request_json['calls']
-
-    async def fetch(session, url, headers, i):
+    for i, call in enumerate(calls, 1):
         print(f"API call #: {i}")
-        async with session.get(url, headers=headers) as response:
-            reply = await response.json()
-            if local:
-                print(reply)
-            return reply
+        # set tableId as variable for passing into rowAccessPolicies API call
+        projectId = call[0]
+        datasetId = call[1]
+        tableId = call[2]
 
-    async def bound_fetch(sem, session, url, headers, i):
-        # Getter function with semaphore.
-        async with sem:
-            return await fetch(session, url, headers, i)
+        # Set the URL for the BigQuery API endpoint
+        url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
 
-    # Restricting to 90 requests per second
-    sem = asyncio.Semaphore(90)
+        # Use the default credentials to obtain an access token
+        creds, _ = default(scopes=["https://www.googleapis.com/auth/bigquery"])
+        creds.refresh(Request())
 
-    async with ClientSession() as session:
-        tasks = []
-        for i, call in enumerate(calls, 1):
-            # set tableId as variable for passing into rowAccessPolicies API call
-            projectId = call[0]
-            datasetId = call[1]
-            tableId = call[2]
+        # Set the authorization header using the access token
+        headers = {
+            "Authorization": f"Bearer {creds.token}",
+            "Content-Type": "application/json"
+        }
 
-            # Set the URL for the BigQuery API endpoint
-            url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
+        # Send the query using the requests module
+        response = await requests.get(url, headers=headers)
 
-            # Use the default credentials to obtain an access token
-            creds, _ = default(
-                scopes=["https://www.googleapis.com/auth/bigquery"])
-            creds.refresh(Request())
+        if local:
+            print(response.json())
 
-            # Set the authorization header using the access token
-            headers = {
-                "Authorization": f"Bearer {creds.token}",
-                "Content-Type": "application/json"
-            }
-
-            # Add tasks to the task list
-            task = asyncio.ensure_future(
-                bound_fetch(sem, session, url, headers, i))
-            tasks.append(task)
-
-        # Collect all responses as they come in
-        responses = await asyncio.gather(*tasks)
-
-    # append results to replies (output)
-    replies.extend(responses)
+        # append results to replies (output)
+        replies.append(response.json())
 
     return json.dumps({
         'replies': [json.dumps(reply) for reply in replies]
     })
 
 
-# load sample json data
-with open('example_requests.json', 'r') as f:
-    request = json.load(f)
+async def main():
+    # Create a semaphore to throttle the requests
+    sem = asyncio.Semaphore(90)
 
-# print(request)
-# Use myfunction as needed
-get_row_access_polices(request, local=True)
+    # Create a task for each API call
+    tasks = []
+    for call in calls:
+        tasks.append(asyncio.create_task(
+            get_row_access_policies(call), sem=sem))
+
+    # Wait for all tasks to complete
+    await asyncio.wait(tasks)
+
+
+if __name__ == "__main__":
+    loop = asyncio.get_event_loop()
+    loop.run_until_complete(main())
