@@ -1,7 +1,7 @@
 import json
 import aiohttp
 from google.auth import default
-from google.auth.transport.aiohttp_req import AiohttpClient
+from google.auth.transport.requests import Request
 import asyncio
 
 
@@ -21,7 +21,7 @@ async def get_row_access_policies(request):
 
             creds, _ = default(
                 scopes=["https://www.googleapis.com/auth/bigquery"])
-            creds.refresh(AiohttpClient())
+            creds.refresh(Request())
 
             headers = {
                 "Authorization": f"Bearer {creds.token}",
@@ -42,3 +42,20 @@ async def get_row_access_policies(request):
     return json.dumps({
         'replies': [json.dumps(reply) for reply in replies]
     })
+
+if __name__ == "__main__":
+    # load sample json data
+    with open('example_requests.json', 'r') as f:
+        request = json.load(f)
+
+    asyncio.run(get_row_access_policies(request))
+    # # Create an event loop
+    # loop = asyncio.new_event_loop()
+    # asyncio.set_event_loop(loop)
+
+    # try:
+    #     # Use the event loop
+    #     loop.run_until_complete(get_row_access_polices(request))
+    # finally:
+    #     # Close the loop
+    #     loop.close()
