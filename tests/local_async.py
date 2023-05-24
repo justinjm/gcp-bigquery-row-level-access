@@ -49,13 +49,3 @@ if __name__ == "__main__":
         request = json.load(f)
 
     asyncio.run(get_row_access_policies(request))
-    # # Create an event loop
-    # loop = asyncio.new_event_loop()
-    # asyncio.set_event_loop(loop)
-
-    # try:
-    #     # Use the event loop
-    #     loop.run_until_complete(get_row_access_polices(request))
-    # finally:
-    #     # Close the loop
-    #     loop.close()
