@@ -1,64 +1,44 @@
-import asyncio
 import json
-import requests
+import aiohttp
 from google.auth import default
-from google.auth.transport.requests import Request
-import time
+from google.auth.transport.aiohttp_req import AiohttpClient
+import asyncio
 
 
 async def get_row_access_policies(request):
     # request_json = request.get_json(silent=True) # CLOUD FUNCTION
-    request_json = request # LOCAL TESTING
+    request_json = request  # LOCAL TESTING
     replies = []
     calls = request_json['calls']
-    for i, call in enumerate(calls, 1):
-        print(f"API call #: {i}")
-        # set tableId as variable for passing into rowAccessPolicies API call
-        projectId = call[0]
-        datasetId = call[1]
-        tableId = call[2]
+    sem = asyncio.Semaphore(90)
 
-        # Set the URL for the BigQuery API endpoint
-        url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
+    async def fetch(call, session):
+        async with sem:
+            projectId = call[0]
+            datasetId = call[1]
+            tableId = call[2]
+            url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
 
-        # Use the default credentials to obtain an access token
-        creds, _ = default(scopes=["https://www.googleapis.com/auth/bigquery"])
-        creds.refresh(Request())
+            creds, _ = default(
+                scopes=["https://www.googleapis.com/auth/bigquery"])
+            creds.refresh(AiohttpClient())
 
-        # Set the authorization header using the access token
-        headers = {
-            "Authorization": f"Bearer {creds.token}",
-            "Content-Type": "application/json"
-        }
+            headers = {
+                "Authorization": f"Bearer {creds.token}",
+                "Content-Type": "application/json"
+            }
 
-        # Send the query using the requests module
-        response = await requests.get(url, headers=headers)
+            async with session.get(url, headers=headers) as response:
+                replies.append(await response.json())
 
-        if local:
-            print(response.json())
+    async with aiohttp.ClientSession() as session:
+        tasks = []
+        for i, call in enumerate(calls, 1):
+            print(f"API call #: {i}")
+            tasks.append(asyncio.create_task(fetch(call, session)))
 
-        # append results to replies (output)
-        replies.append(response.json())
+        await asyncio.gather(*tasks)
 
     return json.dumps({
         'replies': [json.dumps(reply) for reply in replies]
     })
-
-
-async def main():
-    # Create a semaphore to throttle the requests
-    sem = asyncio.Semaphore(90)
-
-    # Create a task for each API call
-    tasks = []
-    for call in calls:
-        tasks.append(asyncio.create_task(
-            get_row_access_policies(call), sem=sem))
-
-    # Wait for all tasks to complete
-    await asyncio.wait(tasks)
-
-
-if __name__ == "__main__":
-    loop = asyncio.get_event_loop()
-    loop.run_until_complete(main())
