@@ -47,3 +47,8 @@ asyncio.run(main())
 #         request = json.load(f)
 
 #     asyncio.run(main()) 
+
+## TODO
+# * add throttling/limitting of 90 requests per second (100 max)
+# * add batch input to mimic BQ remote function behavior
+# * prepare code for CF / testing in GCP
