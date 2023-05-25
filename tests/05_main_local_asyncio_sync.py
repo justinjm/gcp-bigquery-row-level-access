@@ -1,3 +1,5 @@
+# Use asyncio to make a synrchronous request locally (not in CF) to replacate
+# synchronous script with requests for understanding
 import asyncio
 import aiohttp 
 import json

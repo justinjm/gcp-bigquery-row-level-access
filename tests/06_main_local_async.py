@@ -1,52 +1,49 @@
+import asyncio
+from aiohttp import ClientSession
 import json
-import aiohttp
 from google.auth import default
 from google.auth.transport.requests import Request
-import asyncio
 
 
-async def get_row_access_policies(request):
-    # request_json = request.get_json(silent=True) # CLOUD FUNCTION
-    request_json = request  # LOCAL TESTING
-    replies = []
-    calls = request_json['calls']
-    sem = asyncio.Semaphore(90)
+async def hello(url: str, queue: asyncio.Queue):       
+    # Use the default credentials to obtain an access token
+    creds, _ = default(scopes=["https://www.googleapis.com/auth/bigquery"])
+    creds.refresh(Request())
 
-    async def fetch(call, session):
-        async with sem:
-            projectId = call[0]
-            datasetId = call[1]
-            tableId = call[2]
-            url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
+    # Set the authorization header using the access token
+    headers = {
+        "Authorization": f"Bearer {creds.token}",
+        "Content-Type": "application/json"
+    }
 
-            creds, _ = default(
-                scopes=["https://www.googleapis.com/auth/bigquery"])
-            creds.refresh(Request())
+    async with ClientSession() as session:
+        async with session.get(url, headers=headers) as response:
+            result = {"response": await response.text(), "url": url}
+            await queue.put(result)
 
-            headers = {
-                "Authorization": f"Bearer {creds.token}",
-                "Content-Type": "application/json"
-            }
+async def main():
+    projectId = "demos-vertex-ai"
+    datasetId = "z_test"
+    tableId = "crm_account"
+    url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
+    results = []
+    queue = asyncio.Queue()
+    async with asyncio.TaskGroup() as group:
+        for i in range(10):
+            group.create_task(hello(url.format(i), queue))
 
-            async with session.get(url, headers=headers) as response:
-                print(response.json())
-                replies.append(await response.json())
+    while not queue.empty():
+        results.append(await queue.get())
+    
+    print(json.dumps(results))
 
-    async with aiohttp.ClientSession() as session:
-        tasks = []
-        for i, call in enumerate(calls, 1):
-            print(f"API call #: {i}")
-            tasks.append(asyncio.create_task(fetch(call, session)))
 
-        await asyncio.gather(*tasks)
+asyncio.run(main()) 
 
-    return json.dumps({
-        'replies': [json.dumps(reply) for reply in replies]
-    })
 
-if __name__ == "__main__":
-    # load sample json data
-    with open('example_requests.json', 'r') as f:
-        request = json.load(f)
+# if __name__ == "__main__":
+#     # load sample json data
+#     with open('example_requests.json', 'r') as f:
+#         request = json.load(f)
 
-    asyncio.run(get_row_access_policies(request))
+#     asyncio.run(main()) 
