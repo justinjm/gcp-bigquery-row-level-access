@@ -29,5 +29,5 @@ if __name__ == "__main__":
     # load sample json data
     with open('example_requests.json', 'r') as f:
         request = json.load(f)
-        print(request)
+        # print(request)
     asyncio.run(main())
