@@ -29,6 +29,7 @@ async def get_row_access_policies(request):
             }
 
             async with session.get(url, headers=headers) as response:
+                print(response.json())
                 replies.append(await response.json())
 
     async with aiohttp.ClientSession() as session:
