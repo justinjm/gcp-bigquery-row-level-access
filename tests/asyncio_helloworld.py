@@ -1,18 +1,31 @@
 import asyncio
 from aiohttp import ClientSession
 import json
+from google.auth import default
+from google.auth.transport.requests import Request
 
-async def hello(url: str, queue: asyncio.Queue):
+
+async def hello(url: str, queue: asyncio.Queue):       
+    # Use the default credentials to obtain an access token
+    creds, _ = default(scopes=["https://www.googleapis.com/auth/bigquery"])
+    creds.refresh(Request())
+
+    # Set the authorization header using the access token
+    headers = {
+        "Authorization": f"Bearer {creds.token}",
+        "Content-Type": "application/json"
+    }
+
     async with ClientSession() as session:
-        async with session.get(url) as response:
+        async with session.get(url, headers=headers) as response:
             result = {"response": await response.text(), "url": url}
             await queue.put(result)
 
-
 async def main():
-    # I'm using test server localhost, but you can use any url
-    ## start via: `$ cd {local_directory} && python3 -m http.server`
-    url = "http://localhost:8000/data-misc"
+    projectId = "demos-vertex-ai"
+    datasetId = "z_test"
+    tableId = "crm_account"
+    url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
     results = []
     queue = asyncio.Queue()
     async with asyncio.TaskGroup() as group:
