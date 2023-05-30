@@ -27,9 +27,10 @@ async def get_row_access_polices(request, local=False):
     
     async with aiohttp.ClientSession() as session:
         for i, call in enumerate(calls, 1):
-            # 10ms sleep to stay under 100 requests per user per second API quota
-            time.sleep(0.075) 
-
+            # sleep to stay under 100 requests per user per second API quota
+            n = 0.5
+            print(f"Sleeping for: {n} seconds...")
+            time.sleep(n) 
             print(f"API call #: {i}")
             projectId, datasetId, tableId = call[0], call[1], call[2]
             url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
