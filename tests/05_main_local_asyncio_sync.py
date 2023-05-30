@@ -5,11 +5,10 @@ import aiohttp
 import json
 from google.auth import default
 from google.auth.transport.requests import Request
-import time 
+# import time 
 
 
 async def get_row_access_polices(request):
- 
     # Use the default credentials to obtain an access token
     creds, _ = default(scopes=["https://www.googleapis.com/auth/bigquery"])
     creds.refresh(Request())
