@@ -21,16 +21,17 @@ async def get_row_access_polices(url: str, queue: asyncio.Queue):
             result = {"response": await response.text(), "url": url}
             await queue.put(result)
 
-async def main():
-    projectId = "demos-vertex-ai"
-    datasetId = "z_test"
-    tableId = "crm_account"
-    url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
+async def main(request):
+    # request_json = request.get_json(silent=True) # prod
+    request_json = request # test - local
+    calls = request_json['calls']
     results = []
     queue = asyncio.Queue()
     async with asyncio.TaskGroup() as group:
-        for i in range(10):
-            group.create_task(get_row_access_polices(url.format(i), queue))
+        for call in calls:
+            projectId, datasetId, tableId = call[0], call[1], call[2]
+            url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
+            group.create_task(get_row_access_polices(url, queue))
 
     while not queue.empty():
         results.append(await queue.get())
@@ -38,15 +39,11 @@ async def main():
     print(json.dumps(results))
 
 
-asyncio.run(main()) 
-
-
-# if __name__ == "__main__":
-#     # load sample json data
-#     with open('example_requests.json', 'r') as f:
-#         request = json.load(f)
-
-#     asyncio.run(main()) 
+if __name__ == "__main__":
+    # load sample json data
+    with open('example_requests.json', 'r') as f:
+        request = json.load(f)
+    asyncio.run(main(request = request)) 
 
 ## TODO
 # * add throttling/limitting of 90 requests per second (100 max)
