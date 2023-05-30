@@ -16,10 +16,8 @@ def get_row_access_polices(request,
     for i, call in enumerate(calls, 1):
         print(f"API call #: {i}")
         # set tableId as variable for passing into rowAccessPolicies API call
-        projectId = call[0]
-        datasetId = call[1]
-        tableId = call[2]
-
+        projectId, datasetId, tableId = call[0], call[1], call[2]
+        
         # Set the URL for the BigQuery API endpoint
         url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
 
@@ -35,9 +33,6 @@ def get_row_access_polices(request,
 
         # Send the query using the requests module
         response = requests.get(url, headers=headers)
-
-        if local:
-            print(response.json())
 
         # append results to replies (output)
         replies.append(response.json())
