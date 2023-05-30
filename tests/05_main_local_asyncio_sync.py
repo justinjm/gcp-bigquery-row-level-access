@@ -20,28 +20,27 @@ async def get_row_access_polices(request):
         "Content-Type": "application/json"
     }
 
-
     # request_json = request.get_json(silent=True) # prod
     request_json = request # test - local
     replies = []
     calls = request_json['calls']
     
-    for i, call in enumerate(calls, 1):
-        print(f"API call #: {i}")
-        # set tableId as variable for passing into rowAccessPolicies API call
-        projectId, datasetId, tableId = call[0], call[1], call[2]
-        # set url  
-        url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
-    
-        async with aiohttp.ClientSession() as session:
+    async with aiohttp.ClientSession() as session:
+        for i, call in enumerate(calls, 1):
+            print(f"API call #: {i}")
+            # set tableId as variable for passing into rowAccessPolicies API call
+            projectId, datasetId, tableId = call[0], call[1], call[2]
+            # set url  
+            url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
+        
             async with session.get(url, headers=headers) as resp:
-                # print(resp.status)
-                # print(await resp.json())
                 replies.append(await resp.json())
 
-    return json.dumps({
-        'replies': [json.dumps(reply) for reply in replies]
-    })
+        return json.dumps({
+            'replies': [json.dumps(reply) for reply in replies]
+        })
+    
+    print(replies)
 
 if __name__ == "__main__":
     # load sample json data
@@ -51,3 +50,4 @@ if __name__ == "__main__":
         # add SLEEP 
         # time.sleep(0.01)
         asyncio.run(get_row_access_polices(request = request))
+    
