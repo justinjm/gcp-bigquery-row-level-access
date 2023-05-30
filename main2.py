@@ -6,7 +6,7 @@ import asyncio
 import aiohttp 
 
 
-async def get_row_access_polices(request):
+async def get_row_access_polices(request, local=False):
     # Use the default credentials to obtain an access token
     creds, _ = default(scopes=["https://www.googleapis.com/auth/bigquery"])
     creds.refresh(Request())
@@ -16,9 +16,11 @@ async def get_row_access_polices(request):
         "Authorization": f"Bearer {creds.token}",
         "Content-Type": "application/json"
     }
-
-    request_json = request.get_json(silent=True) 
-    # request_json = request ### LOCAL TESTING ONLY #############################
+    if local:
+        request_json = request
+    else: 
+        request_json = request.get_json(silent=True)
+        
     replies = []
     calls = request_json['calls']
     
@@ -38,16 +40,7 @@ async def get_row_access_polices(request):
             'replies': [json.dumps(reply) for reply in replies]
         })    
 
-def run(request):
-    asyncio.run(get_row_access_polices(request = request))    
+def run(request, local=False):
+    asyncio.run(get_row_access_polices(request = request,
+                                       local = local))    
 
-###############################################################################
-### LOCAL TESTING ONLY ########################################################
-# # load sample json data
-# with open('example_requests.json', 'r') as f:
-#     request = json.load(f)
-#     # print(request) # print for debugging
-# asyncio.run(get_row_access_polices(request = request))
-###############################################################################
-    
-    
