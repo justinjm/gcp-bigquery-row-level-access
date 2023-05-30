@@ -5,7 +5,7 @@ from google.auth import default
 from google.auth.transport.requests import Request
 
 
-async def hello(url: str, queue: asyncio.Queue):       
+async def get_rowAccessPolicies(url: str, queue: asyncio.Queue):       
     # Use the default credentials to obtain an access token
     creds, _ = default(scopes=["https://www.googleapis.com/auth/bigquery"])
     creds.refresh(Request())
@@ -30,7 +30,7 @@ async def main():
     queue = asyncio.Queue()
     async with asyncio.TaskGroup() as group:
         for i in range(10):
-            group.create_task(hello(url.format(i), queue))
+            group.create_task(get_rowAccessPolicies(url.format(i), queue))
 
     while not queue.empty():
         results.append(await queue.get())
@@ -52,3 +52,8 @@ asyncio.run(main())
 # * add throttling/limitting of 90 requests per second (100 max)
 # * add batch input to mimic BQ remote function behavior
 # * prepare code for CF / testing in GCP
+## * input = object = request json (`for call in calls`)
+## * output = object "replies"  
+## * CF entrypoint ?? 
+## * CF requirements.txt
+
