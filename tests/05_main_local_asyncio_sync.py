@@ -36,11 +36,12 @@ async def get_row_access_polices(request):
             async with session.get(url, headers=headers) as resp:
                 replies.append(await resp.json())
 
+        print(replies)   
+        
         return json.dumps({
             'replies': [json.dumps(reply) for reply in replies]
-        })
-    
-    print(replies)
+        })    
+        
 
 if __name__ == "__main__":
     # load sample json data
@@ -49,5 +50,7 @@ if __name__ == "__main__":
         # print(request)
         # add SLEEP 
         # time.sleep(0.01)
-        asyncio.run(get_row_access_polices(request = request))
+    asyncio.run(get_row_access_polices(request = request))
+
+    
     
