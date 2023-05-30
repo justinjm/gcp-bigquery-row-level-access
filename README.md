@@ -105,14 +105,24 @@ Then, we create row level access policies for each table by running the followin
 
 <walkthrough-menu-navigation sectionId="BIGQUERY_SECTION">BigQuery</walkthrough-menu-navigation>
 
+Or you can run the commands via `bq` utility within Cloud Shell or your local terminal:
 
 #### 1. crm_account policy
 
 ```sql
 CREATE ROW ACCESS POLICY crm_account_filter
 ON `z_test.crm_account`
-GRANT TO('user:bruce@justinjm.altostrat.com')
+GRANT TO('user:your-email@domain.com')
 FILTER USING(State_Code='CA')
+```
+
+bq utility: 
+
+```sh
+bq --format=json query --dataset_id=$PROJECT_ID:z_test --location=US --nouse_legacy_sql  "
+CREATE ROW ACCESS POLICY crm_account_filter
+ON \`crm_account\` GRANT TO('user:your-email@domain.com') FILTER USING(State_Code='CA')
+"
 ```
 
 #### 2. crm_user policy
@@ -124,11 +134,34 @@ GRANT TO('user:your-email@domain.com')
 FILTER USING(Country_Code='US')
 ```
 
+bq utility:
+
+```sh
+bq --format=json query --dataset_id=$PROJECT_ID:z_test --location=US --nouse_legacy_sql  "
+CREATE ROW ACCESS POLICY crm_user_filter
+ON \`crm_user\` GRANT TO('user:your-email@domain.com') FILTER USING(Country_Code='US')
+"
+```
+
 ## Setup Google Cloud Function
 
 Now that our sample data is loaded in BigQuery, let's avigate to [Cloud Functions](https://console.cloud.google.com/functions) within the Google Cloud console and setup a Cloud function as follows. For this workflow, we will use 1st Gen Cloud functions.  Click the button below to be shown the way:
 
 <walkthrough-menu-navigation sectionId="FUNCTIONS_SECTION">Cloud Functions</walkthrough-menu-navigation>
+
+### use gcloud
+
+Alternatively, run the following gcloud command: 
+
+```sh
+gcloud functions deploy bq-table-row-access-policies \
+[--gen2] \
+--region=us-central1 \
+--runtime=python311 \
+--source=. \
+--entry-point=run \
+--trigger-http
+```
 
 ### 1. Configuration
 
@@ -295,3 +328,8 @@ BigQuery Remote Functions
 BigQuery Information Schema
 
 * [TABLES view  |  BigQuery  |  Google Cloud](https://cloud.google.com/bigquery/docs/information-schema-tables)
+
+
+Cloud Functions 
+
+[Write Cloud Functions  |  Cloud Functions Documentation  |  Google Cloud](https://cloud.google.com/functions/docs/writing)
