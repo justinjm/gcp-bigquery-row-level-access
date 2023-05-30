@@ -1,11 +1,11 @@
 import json
-import requests
 from google.auth import default
 from google.auth.transport.requests import Request
-import time
+import asyncio
+import aiohttp 
 
 
-def get_row_access_polices(request, local = False):
+async def get_row_access_polices(request, local=False):
     # Use the default credentials to obtain an access token
     creds, _ = default(scopes=["https://www.googleapis.com/auth/bigquery"])
     creds.refresh(Request())
@@ -15,29 +15,27 @@ def get_row_access_polices(request, local = False):
         "Authorization": f"Bearer {creds.token}",
         "Content-Type": "application/json"
     }
-
+    # if running locally, use sample input json file 
     if local:
         request_json = request
     else: 
         request_json = request.get_json(silent=True)
-    
+        
     replies = []
     calls = request_json['calls']
     
-    for i, call in enumerate(calls, 1):
-        print(f"API call #: {i}")
-        # set tableId as variable for passing into rowAccessPolicies API call
-        projectId, datasetId, tableId = call[0], call[1], call[2]
+    async with aiohttp.ClientSession() as session:
+        for i, call in enumerate(calls, 1):
+            print(f"API call #: {i}")
+            projectId, datasetId, tableId = call[0], call[1], call[2]
+            url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
+        
+            async with session.get(url, headers=headers) as response:
+                replies.append(await response.json())
 
-        # Set the URL for the BigQuery API endpoint
-        url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
+        return json.dumps({
+            'replies': [json.dumps(reply) for reply in replies]
+        })    
 
-        # Send the query using the requests module
-        response = requests.get(url, headers=headers)
-
-        # append results to replies (output)
-        replies.append(response.json())
-
-    return json.dumps({
-        'replies': [json.dumps(reply) for reply in replies]
-    })
+def run(request, local=False):
+    return asyncio.run(get_row_access_polices(request = request, local = local))    

@@ -14,7 +14,7 @@ main_dir = os.path.dirname(script_dir)
 sys.path.append(main_dir)
 
 # Import the function from main.py
-from main import get_row_access_polices
+from main import run
 
 # load sample json data 
 with open('example_requests.json', 'r') as f:
@@ -22,7 +22,7 @@ with open('example_requests.json', 'r') as f:
 
 ## run test with simple timer 
 start_time = timeit.default_timer()
-get_row_access_polices(request, local = True)
+run(request, local = True)
 end_time = timeit.default_timer()
 execution_time = end_time - start_time
 print(f"Executed the function in {execution_time} seconds")
