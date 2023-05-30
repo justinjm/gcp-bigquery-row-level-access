@@ -1,7 +1,7 @@
 import json
 
 # number of calls to generate 
-n = 1000 
+n = 10
 
 obj = {
     "requestId": "124ab1c",

@@ -5,8 +5,6 @@ import aiohttp
 import json
 from google.auth import default
 from google.auth.transport.requests import Request
-# import time 
-
 
 async def get_row_access_polices(request):
     # Use the default credentials to obtain an access token
@@ -32,24 +30,24 @@ async def get_row_access_polices(request):
             # set url  
             url = f"https://bigquery.googleapis.com/bigquery/v2/projects/{projectId}/datasets/{datasetId}/tables/{tableId}/rowAccessPolicies"
         
-            async with session.get(url, headers=headers) as resp:
-                replies.append(await resp.json())
+            async with session.get(url, headers=headers) as response:
+                replies.append(await response.json())
 
-        print(replies)   
-        
+        # print(replies)   # print for debugging
         return json.dumps({
             'replies': [json.dumps(reply) for reply in replies]
         })    
-        
 
-if __name__ == "__main__":
-    # load sample json data
-    with open('example_requests.json', 'r') as f:
-        request = json.load(f)
-        # print(request)
-        # add SLEEP 
-        # time.sleep(0.01)
-    asyncio.run(get_row_access_polices(request = request))
+def run(request):
+    asyncio.run(get_row_access_polices(request = request))    
+
+
+# load sample json data
+# with open('example_requests.json', 'r') as f:
+#     request = json.load(f)
+#     # print(request) # print for debugging
+#     # time.sleep(0.01) # add sleep of 10ms here if needed 
+# asyncio.run(get_row_access_polices(request = request))
 
     
     
