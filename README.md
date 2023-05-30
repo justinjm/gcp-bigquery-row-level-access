@@ -40,7 +40,7 @@ PROJECT_ID=$(gcloud config get-value project)
 If for some reason you do not have a project set, run the following and replace `your-project-id`:
 
 ```sh
-export PROJECT_ID="demos-vertex-ai" && echo $PROJECT_ID
+export PROJECT_ID="<YOUR-PROJECT-ID>" && echo $PROJECT_ID
 gcloud config set project $PROJECT_ID
 ```
 
@@ -69,7 +69,8 @@ bq mk --connection --display_name='get_row_access_policies' \
 Show connection info and copy the service account ("serviceAccountId") under "Properties, you will need this in a later step
 
 ```sh
-bq show --location=US --connection gcf-conn
+export BQ_CONN_SVC_ACCOUNT=`bq show --format=json --location=US --connection  gcf-conn  | jq -r '.cloudResource.serviceAccountId'`
+echo $BQ_CONN_SVC_ACCOUNT 
 ```
 
 ## Setup BigQuery
