@@ -16,7 +16,7 @@ async def get_row_access_polices(request, local=False):
         "Authorization": f"Bearer {creds.token}",
         "Content-Type": "application/json"
     }
-    
+
     if local:
         request_json = request
     else: 
@@ -28,7 +28,7 @@ async def get_row_access_polices(request, local=False):
     async with aiohttp.ClientSession() as session:
         for i, call in enumerate(calls, 1):
             # 10ms sleep to stay under 100 requests per user per second API quota
-            time.sleep(0.01) 
+            time.sleep(0.075) 
 
             print(f"API call #: {i}")
             projectId, datasetId, tableId = call[0], call[1], call[2]

@@ -4,6 +4,7 @@ from google.auth.transport.requests import Request
 import sys
 import os
 import json
+import timeit 
 
 
 # Add the main directory to the system path
@@ -19,5 +20,9 @@ from main import get_row_access_polices
 with open('example_requests.json', 'r') as f:
     request = json.load(f)
 
-# Use myfunction as needed
+## run test with simple timer 
+start_time = timeit.default_timer()
 get_row_access_polices(request, local = True)
+end_time = timeit.default_timer()
+execution_time = end_time - start_time
+print(f"Executed the function in {execution_time} seconds")
