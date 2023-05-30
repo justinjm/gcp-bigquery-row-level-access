@@ -227,13 +227,13 @@ WITH CONNECTION `demos-vertex-ai.us.gcf-conn` OPTIONS (
 ```
 
 ```sh
-# create the connection
- bq --format=json query --dataset_id=$PROJECT_ID:z_test --location=US --nouse_legacy_sql  "
-  CREATE OR REPLACE FUNCTION get_row_access_policies2(table_catalog STRING,
-    table_schema STRING, table_name STRING) RETURNS STRING REMOTE 
-    WITH CONNECTION \`$PROJECT_ID.us.gcf-conn\`
-    OPTIONS (endpoint = 'https://bq-table-row-access-policies2-fjuwtt6ysq-uc.a.run.app')
-"
+# # create the connection
+#  bq --format=json query --dataset_id=$PROJECT_ID:z_test --location=US --nouse_legacy_sql  "
+#   CREATE OR REPLACE FUNCTION get_row_access_policies2(table_catalog STRING,
+#     table_schema STRING, table_name STRING) RETURNS STRING REMOTE 
+#     WITH CONNECTION \`$PROJECT_ID.us.gcf-conn\`
+#     OPTIONS (endpoint = 'https://bq-table-row-access-policies2-fjuwtt6ysq-uc.a.run.app')
+# "
 ```
 
 ## Invoke remote function from BigQuery
