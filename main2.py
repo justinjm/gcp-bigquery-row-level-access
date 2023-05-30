@@ -28,7 +28,7 @@ async def get_row_access_polices(request, local=False):
     async with aiohttp.ClientSession() as session:
         for i, call in enumerate(calls, 1):
             # sleep to stay under 100 requests per user per second API quota
-            n = 0.5
+            n = 0.01
             print(f"Sleeping for: {n} seconds...")
             time.sleep(n) 
             print(f"API call #: {i}")
@@ -43,6 +43,4 @@ async def get_row_access_polices(request, local=False):
         })    
 
 def run(request, local=False):
-    asyncio.run(get_row_access_polices(request = request,
-                                       local = local))    
-
+    return asyncio.run(get_row_access_polices(request = request, local = local))    
