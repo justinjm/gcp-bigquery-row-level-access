@@ -32,4 +32,5 @@ if __name__ == "__main__":
     with open('example_requests.json', 'r') as f:
         request = json.load(f)
         # print(request)
-    asyncio.run(main())
+        # add SLEEP 
+        asyncio.run(main())
