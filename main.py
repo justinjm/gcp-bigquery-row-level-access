@@ -5,9 +5,7 @@ from google.auth.transport.requests import Request
 import time
 
 
-def get_row_access_polices(request,
-                           local = False):
-    
+def get_row_access_polices(request, local = False):
     # Use the default credentials to obtain an access token
     creds, _ = default(scopes=["https://www.googleapis.com/auth/bigquery"])
     creds.refresh(Request())

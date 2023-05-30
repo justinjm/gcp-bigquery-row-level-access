@@ -16,6 +16,7 @@ async def get_row_access_polices(request, local=False):
         "Authorization": f"Bearer {creds.token}",
         "Content-Type": "application/json"
     }
+    
     if local:
         request_json = request
     else: 
