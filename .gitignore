@@ -1,6 +1,13 @@
+# R 
 .Rproj.user
 .Rhistory
 .RData
 .Ruserdata
 .Renviron
 *.rds
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
