@@ -145,13 +145,15 @@ ON \`crm_user\` GRANT TO('user:your-email@domain.com') FILTER USING(Country_Code
 
 ## Setup Google Cloud Function
 
-Now that our sample data is loaded in BigQuery, let's avigate to [Cloud Functions](https://console.cloud.google.com/functions) within the Google Cloud console and setup a Cloud function as follows. For this workflow, we will use 1st Gen Cloud functions.  Click the button below to be shown the way:
+Now that our sample data is loaded in BigQuery, let's avigate to [Cloud Functions](https://console.cloud.google.com/functions) within the Google Cloud console and setup a Cloud function as follows. For this workflow, we will use 2nd  Gen Cloud functions.  Click the button below to be shown the way:
 
 <walkthrough-menu-navigation sectionId="FUNCTIONS_SECTION">Cloud Functions</walkthrough-menu-navigation>
 
 ### use gcloud
 
-Alternatively, run the following gcloud command: 
+Alternatively, run the following gcloud commands: 
+
+Create function 
 
 ```sh
 gcloud functions deploy bq-table-row-access-policies \
@@ -160,10 +162,47 @@ gcloud functions deploy bq-table-row-access-policies \
   --runtime=python311 \
   --source=functions/ \
   --entry-point=run \
-  --trigger-http
+  --trigger-http \
+  --timeout=3600
+
+# Allow unauthenticated invocations of new function [remote_concat]? (y/N)?  N
 ```
 
-### 1. Configuration
+Allow BQ connection `gcf-conn` service account call the cloud function 
+
+```sh
+gcloud functions add-iam-policy-binding bq-table-row-access-policies \
+  --member="serviceAccount:$BQ_CONN_SVC_ACCOUNT" \
+  --role="roles/cloudfunctions.invoker"
+```
+
+And allow access to the underlying Cloud Run service via  the `gcloud functions add-invoker-policy-binding` command 
+
+
+```sh
+# # create the connection
+#  bq --format=json query --dataset_id=$PROJECT_ID:z_test --location=US --nouse_legacy_sql  "
+#   CREATE OR REPLACE FUNCTION get_row_access_policies(table_catalog STRING,
+#     table_schema STRING, table_name STRING) RETURNS STRING REMOTE 
+#     WITH CONNECTION \`$PROJECT_ID.us.gcf-conn\`
+#     OPTIONS (endpoint = 'https://bq-table-row-access-policies-fjuwtt6ysq-uc.a.run.app')
+# "
+```
+
+```sh
+bq --format=json query --dataset_id=$PROJECT_ID:z_test --location=US --nouse_legacy_sql  "
+SELECT
+  table_catalog,
+  table_schema,
+  table_name,
+  get_row_access_policies(table_catalog, table_schema, table_name) as rowAccessPolicies
+FROM
+  z_test.INFORMATION_SCHEMA.TABLES
+"
+```
+
+
+### 1. Configuration TODO
 
 On the configuration page, configure the following settings:
 
@@ -249,7 +288,7 @@ Now, back to the [BigQuery console](https://console.cloud.google.com/bigquery)  
 
 ```sql
 CREATE OR REPLACE FUNCTION
-  z_test.get_row_access_policies2(table_catalog STRING,
+  z_test.get_row_access_policies(table_catalog STRING,
     table_schema STRING,
     table_name STRING)
   RETURNS STRING REMOTE
@@ -259,13 +298,15 @@ WITH CONNECTION `demos-vertex-ai.us.gcf-conn` OPTIONS (
     endpoint = 'https://bq-table-row-access-policies2-fjuwtt6ysq-uc.a.run.app' )
 ```
 
+or via `bq` utility: 
+
 ```sh
 # # create the connection
 #  bq --format=json query --dataset_id=$PROJECT_ID:z_test --location=US --nouse_legacy_sql  "
-#   CREATE OR REPLACE FUNCTION get_row_access_policies2(table_catalog STRING,
+#   CREATE OR REPLACE FUNCTION get_row_access_policies(table_catalog STRING,
 #     table_schema STRING, table_name STRING) RETURNS STRING REMOTE 
 #     WITH CONNECTION \`$PROJECT_ID.us.gcf-conn\`
-#     OPTIONS (endpoint = 'https://bq-table-row-access-policies2-fjuwtt6ysq-uc.a.run.app')
+#     OPTIONS (endpoint = 'https://bq-table-row-access-policies-fjuwtt6ysq-uc.a.run.app')
 # "
 ```
 
