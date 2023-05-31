@@ -239,6 +239,11 @@ SELECT
 FROM data
 ```
 
+### Success! 
+
+If you're seeing row access polices in the results from the query above, you're done! Check out the "Resources" section at the end for more.
+
+
 ## Setup Google Cloud Function: Option 2 - Google Cloud Console
 
 Click the button below to be shown the way:
@@ -362,6 +367,11 @@ References:
 
 * <https://cloud.google.com/bigquery/docs/reference/standard-sql/json_functions#string_for_json>
 * <https://cloud.google.com/bigquery/docs/information-schema-tables>
+
+
+### Success
+
+If you're seeing row access polices in the results from the query above, you're done! Check out the "Resources" section at the end for more.
 
 ## Resources
 
