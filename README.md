@@ -148,7 +148,7 @@ ON \`crm_user\` GRANT TO('user:$GCLOUD_USER') FILTER USING(Country_Code='US')
 
 Now that our sample data is loaded in BigQuery, let's avigate to [Cloud Functions](https://console.cloud.google.com/functions) within the Google Cloud console and setup a Cloud function as follows. For this workflow, we will use 2nd  Gen Cloud functions.  
 
-If you prefer to use a GUI or new to Cloud functions, skip ahead to "Option 2 - Google Cloud Console"
+If you prefer to use a GUI or new to Cloud functions, skip ahead to ["Option 2 - Google Cloud Console"](#setup-google-cloud-function-option-2---google-cloud-console)
 
 ## Setup Google Cloud Function: Option 1 - command line 
 
@@ -367,7 +367,6 @@ References:
 
 * <https://cloud.google.com/bigquery/docs/reference/standard-sql/json_functions#string_for_json>
 * <https://cloud.google.com/bigquery/docs/information-schema-tables>
-
 
 ### Success
 
