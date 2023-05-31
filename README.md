@@ -262,14 +262,18 @@ On the configuration page, configure the following settings:
   * function name: `bq-table-row-access-policies`
   * region: `us-central1`
 * Trigger
-  * Trigger type: `HTTP`
-  * leave the rest as defaults and click save 
+  * Trigger type: `HTTPS`
+  * Expand the section "Runtime, build, connections and security settings":
 
 ![](img/gcf-01.png)
 
-Then, scroll to the bottom and click "Next"
+#### 1.1 Runtime, build, connections and security settings
+
+Set the timeout to be `3600` or the maximum to ensure we don't have any timeout issues.
 
 ![](img/gcf-02.png)
+
+Then, scroll to the bottom and click "Next"
 
 ### 2. Code
 
@@ -279,9 +283,11 @@ On the Code page, configure the following settings:
 * Source code: Inline Editor 
 * Entry point: `run`
 
-Then, select the `main.py` file on the left-hand side and copy the code from the `main.py` file from this repository.
+Then, create 2 files: `main.py` and `requirements.txt` (found in the [functions](/functions/) directory). 
 
-Repeat for  `requirements.txt` and then click "DEPLOY" 
+1. select the `main.py` file on the left-hand side and copy the code from the `main.py` file in this repository
+2. Repeat for  `requirements.txt` 
+3. and then click "DEPLOY" at the bottom 
 
 ![](img/gcf-03.png)
 
