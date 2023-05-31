@@ -59,7 +59,7 @@ gcloud services enable bigqueryconnection.googleapis.com
 Create a [connection](https://cloud.google.com/bigquery/docs/reference/standard-sql/remote-functions#create_a_connection) between BigQuery and Cloud Functions
 
 ```sh
-bq mk --connection --display_name='get_row_access_policies' \
+bq mk --connection --display_name='google cloud functions' \
     --connection_type=CLOUD_RESOURCE \
     --project_id=$PROJECT_ID \
     --location=US  \
@@ -165,27 +165,20 @@ gcloud functions deploy bq-table-row-access-policies \
   --source=functions/ \
   --entry-point=run \
   --trigger-http \
-  --timeout=3600
-
-# Allow unauthenticated invocations of new function [remote_concat]? (y/N)?  N
+  --timeout=3600 \
+  --no-allow-unauthenticated
 ```
-
-TODO - try `--no-allow-unauthenticated`  <https://cloud.google.com/sdk/gcloud/reference/functions/deploy#--[no-]allow-unauthenticated>
 
 #### Allow BQ Connection to call the Cloud Function
 
 Allow BQ connection `gcf-conn` service account call the cloud function and allow access to the underlying Cloud Run service when prompted:
 
 ```sh
-gcloud functions add-iam-policy-binding bq-table-row-access-policies \
-  --member="serviceAccount:$BQ_CONN_SVC_ACCOUNT" \
-  --role="roles/cloudfunctions.invoker"
-# Would you like to run this command and additionally grant [serviceAccount:$BQ_CONN_SVC_ACCOUNT] permission to invoke function [bq-table-row-access-policies] (Y/n)?  Y
+gcloud functions add-invoker-policy-binding bq-table-row-access-policies \
+  --member="serviceAccount:$BQ_CONN_SVC_ACCOUNT" 
 ```
 
-TODO - add role for Cloud Run / gen 2 CF?
-
-<https://cloud.google.com/sdk/gcloud/reference/functions/add-iam-policy-binding>  
+<https://cloud.google.com/sdk/gcloud/reference/functions/add-invoker-policy-binding>
 <https://cloud.google.com/bigquery/docs/remote-functions#create_a_connection>
 
 Then get the cloud function uri as a variable for re-use:
@@ -293,13 +286,15 @@ Then, create 2 files: `main.py` and `requirements.txt` (found in the [functions]
 
 ### Allow BQ Connection to call the Cloud Function
 
-While GCF is deploying, grant service account of BQ connection `gcf-conn` created earlier via`bq mk --connection` to allow BQ to invoke the Cloud Function `bq-table-row-access-policies` from SQL:
+While GCF is deploying, grant service account of BQ connection `gcf-conn` created earlier via`bq mk --connection` to allow BQ to invoke the Cloud Function `bq-table-row-access-policies` from SQL by going to the "IAM & Admin" page
 
-```sh
-gcloud functions add-iam-policy-binding bq-table-row-access-policies \
-    --member=serviceAccount:$BQ_CONN_SVC_ACCOUNT \
-    --role=roles/cloudfunctions.invoker
-```
+1. Go to the [AM & Admin](https://console.cloud.google.com/project/_/iam-admin) page.
+2. Click person\_add **Add**. The **Add principals** dialog opens.
+3. In the **New principals** field, enter the service account ID that you copied earlier.
+4. In the **Select a role** field, since we are using 2nd-Gen Cloud function. choose **Cloud Run**, and then select **Cloud Run Invoker role**.  
+5. Click **Save**.
+
+See more details here: [Working with Remote Functions > Set up Access](https://cloud.google.com/bigquery/docs/remote-functions#grant_permission_on_function)
 
 #### Optional: quick test
 
