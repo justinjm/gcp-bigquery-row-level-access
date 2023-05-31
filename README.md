@@ -155,7 +155,7 @@ The following steps can be quickly run on the command line for those that are co
 
 #### Create Cloud Function
 
-Create and deploy a Cloud function:
+Create and deploy a Cloud function from the source code in the [functions](functions/) directory:
 
 ```sh
 gcloud functions deploy bq-table-row-access-policies \
@@ -187,8 +187,6 @@ TODO - add role for Cloud Run / gen 2 CF?
 
 <https://cloud.google.com/sdk/gcloud/reference/functions/add-iam-policy-binding>  
 <https://cloud.google.com/bigquery/docs/remote-functions#create_a_connection>
-
-
 
 Then get the cloud function uri as a variable for re-use:
 
