@@ -7,11 +7,12 @@ import json
 import timeit 
 
 
-# Add the main directory to the system path
+# several steps to eventually import the Python function we use for the Cloud Function
 script_path = os.path.abspath(__file__)
 script_dir = os.path.dirname(script_path)
 main_dir = os.path.dirname(script_dir)
-sys.path.append(main_dir)
+functions_dir = os.path.join(main_dir, "functions")
+sys.path.append(functions_dir)
 
 # Import the function from main.py
 from main import run
@@ -38,11 +39,11 @@ obj = {
 for _ in range(n-1):
     obj["calls"].append(["demos-vertex-ai", "z_test", "crm_account"])
 
-## Write the modified object to a new file
+## Write to a json file
 with open('example_requests.json', 'w') as f:
     json.dump(obj, f)
 
-# load sample json data 
+## load sample json file 
 with open('example_requests.json', 'r') as f:
     request = json.load(f)
 
@@ -52,7 +53,6 @@ run(request, local = True)
 end_time = timeit.default_timer()
 execution_time = end_time - start_time
 print(f"Executed the function in {execution_time} seconds")
-
 
 ## delete sample file 
 os.remove('example_requests.json')
