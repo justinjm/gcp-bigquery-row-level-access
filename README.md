@@ -38,11 +38,10 @@ export PROJECT_ID=`gcloud config get-value project`
 export GCLOUD_USER=`gcloud config get-value core/account`
 ```
 
-If for some reason you do not have a project set, run the following and replace `your-project-id`:
+If for some reason you do not have a project set, run the following and replace `<YOUR-PROJECT-ID>`:
 
 ```sh
-export PROJECT_ID="<YOUR-PROJECT-ID>" && echo $PROJECT_ID
-gcloud config set project $PROJECT_ID
+export PROJECT_ID="<YOUR-PROJECT-ID>" && gcloud config set project $PROJECT_ID
 ```
 
 ## Setup GCP environment
@@ -113,7 +112,7 @@ Or you can run the commands via `bq` utility within Cloud Shell or your local te
 ```sql
 CREATE ROW ACCESS POLICY crm_account_filter
 ON `z_test.crm_account`
-GRANT TO('user:your-email@domain.com')
+GRANT TO('user:<YOUR-EMAIL@DOMAIN.COM>')
 FILTER USING(State_Code='CA')
 ```
 
@@ -122,7 +121,7 @@ bq utility:
 ```sh
 bq --format=json query --dataset_id=$PROJECT_ID:z_test --location=US --nouse_legacy_sql  "
 CREATE ROW ACCESS POLICY crm_account_filter
-ON \`crm_account\` GRANT TO('user:your-email@domain.com') FILTER USING(State_Code='CA')
+ON \`crm_account\` GRANT TO('user:$GCLOUD_USER') FILTER USING(State_Code='CA')
 "
 ```
 
@@ -131,7 +130,7 @@ ON \`crm_account\` GRANT TO('user:your-email@domain.com') FILTER USING(State_Cod
 ```sql
 CREATE ROW ACCESS POLICY crm_user_filter
 ON `z_test.crm_user`
-GRANT TO('user:your-email@domain.com')
+GRANT TO('user:<YOUR-EMAIL@DOMAIN.COM>')
 FILTER USING(Country_Code='US')
 ```
 
@@ -183,6 +182,13 @@ gcloud functions add-iam-policy-binding bq-table-row-access-policies \
   --role="roles/cloudfunctions.invoker"
 # Would you like to run this command and additionally grant [serviceAccount:$BQ_CONN_SVC_ACCOUNT] permission to invoke function [bq-table-row-access-policies] (Y/n)?  Y
 ```
+
+TODO - add role for Cloud Run / gen 2 CF?
+
+<https://cloud.google.com/sdk/gcloud/reference/functions/add-iam-policy-binding>  
+<https://cloud.google.com/bigquery/docs/remote-functions#create_a_connection>
+
+
 
 Then get the cloud function uri as a variable for re-use:
 
