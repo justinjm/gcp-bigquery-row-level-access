@@ -148,7 +148,7 @@ ON \`crm_user\` GRANT TO('user:$GCLOUD_USER') FILTER USING(Country_Code='US')
 
 Now that our sample data is loaded in BigQuery, let's avigate to [Cloud Functions](https://console.cloud.google.com/functions) within the Google Cloud console and setup a Cloud function as follows. For this workflow, we will use 2nd  Gen Cloud functions.  
 
-If you prefer to use a GUI or new to Cloud functions, skip ahead to ["Option 2 - Google Cloud Console"](#setup-google-cloud-function-option-2---google-cloud-console)
+If you prefer to use a GUI or new to Cloud functions, skip ahead to Step 6 ["Option 2 - Google Cloud Console"](#setup-google-cloud-function-option-2---google-cloud-console)
 
 ## Setup Google Cloud Function: Option 1 - command line 
 
@@ -241,8 +241,7 @@ FROM data
 
 ### Success! 
 
-If you're seeing row access polices in the results from the query above, you're done! Check out the [Resources](#resources) section at the end for more.
-
+If you're seeing row access polices in the results from the query above, you're done! Check out more [resources](#resources) in the last step by clicking "Next" button below.
 
 ## Setup Google Cloud Function: Option 2 - Google Cloud Console
 
@@ -370,7 +369,7 @@ References:
 
 ### Success
 
-If you're seeing row access polices in the results from the query above, you're done! Check out the [Resources](#resources) section at the end for more..
+If you're seeing row access polices in the results from the query above, you're done! Check out more [resources](#resources) in the last step by clicking "Next" button below.
 
 ## Resources
 
@@ -389,7 +388,6 @@ BigQuery Information Schema
 
 * [TABLES view  |  BigQuery  |  Google Cloud](https://cloud.google.com/bigquery/docs/information-schema-tables)
 
-
-Cloud Functions 
+Cloud Functions
 
 [Write Cloud Functions  |  Cloud Functions Documentation  |  Google Cloud](https://cloud.google.com/functions/docs/writing)
