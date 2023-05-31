@@ -241,7 +241,7 @@ FROM data
 
 ### Success! 
 
-If you're seeing row access polices in the results from the query above, you're done! Check out the "Resources" [Resources](#resources) section at the end for more.
+If you're seeing row access polices in the results from the query above, you're done! Check out the [Resources](#resources) section at the end for more.
 
 
 ## Setup Google Cloud Function: Option 2 - Google Cloud Console
@@ -371,7 +371,7 @@ References:
 
 ### Success
 
-If you're seeing row access polices in the results from the query above, you're done! Check out the "Resources" [Resources](#resources) section at the end for more..
+If you're seeing row access polices in the results from the query above, you're done! Check out the [Resources](#resources) section at the end for more..
 
 ## Resources
 
