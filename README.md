@@ -158,7 +158,7 @@ gcloud functions deploy bq-table-row-access-policies \
   --gen2 \
   --region=us-central1 \
   --runtime=python311 \
-  --source=./functions/ \
+  --source=functions/ \
   --entry-point=run \
   --trigger-http
 ```
